@@ -1,0 +1,1036 @@
+QUESTION 1
+```{r}
+student<-read.csv('Q1a.csv',header=TRUE)
+head(student)
+```
+
+QUESTION 1
+a. Extract each dept students names separately
+```{r}
+aggregate(Name~Dept.Name,student,toString)
+```
+
+b. Extract S grade scores in all subjects in each dept seperately.
+```{r}
+s<-student[student$Sub1=="S"|student$Sub2=="S"|student$Sub3=="S"|student$Sub4=="S"|student$Sub5=="S", c("Name","Dept.Name")]
+
+aggregate(Name~Dept.Name,s,toString)
+```
+
+c. Extract students who have scored at least S grades in any 2 subjects
+```{r}
+student[rowSums(student=="S")>1,c("Name","Dept.Name")]
+```
+
+d. Extract students who have scored above 9 SGPA in each dept
+```{r}
+s1<-student[student$SGPA>9,c("Name","Dept.Name")]
+aggregate(Name~Dept.Name,s1,toString)
+
+```
+# now change all the grade value in each subject column to random marks and then execute these 2 querries
+e.store numerical data and transform to grades and store in new data frame
+
+
+```{r}
+library(plyr)
+
+student1 <-transform(student, Sub1=as.factor(mapvalues(Sub1,c(80:100,60:79,40:59,0:39),c(rep("A",21),rep("B",20),rep("C",20),rep("D",40)))))
+student1
+
+
+student2 <-transform(student1, Sub2=as.factor(mapvalues(Sub2,c(80:100,60:79,40:59,0:39),c(rep("A",21),rep("B",20),rep("C",20),rep("D",40)))))
+student2
+
+
+student3<-transform(student2, Sub3=as.factor(mapvalues(Sub3,c(80:100,60:79,40:59,0:39),c(rep("A",21),rep("B",20),rep("C",20),rep("D",40)))))
+student3
+
+
+student4 <-transform(student3, Sub4=as.factor(mapvalues(Sub4,c(80:100,60:79,40:59,0:39),c(rep("A",21),rep("B",20),rep("C",20),rep("D",40)))))
+student4
+
+
+student5 <-transform(student4, Sub5=as.factor(mapvalues(Sub5,c(80:100,60:79,40:59,0:39),c(rep("A",21),rep("B",20),rep("C",20),rep("D",40)))))
+student5
+
+```
+
+f.check wether student grades are identical or not in each subject
+```{r}
+identical(student$Sub1,student$Sub2,student$Sub3,student$Sub4,student$Sub5)
+```
+
+Q2
+```{r}
+faculty<-read.csv('Q1b.csv',header=TRUE)
+head(faculty)
+```
+
+a. extract each dept faculty details separately
+```{r}
+aggregate(Name~Dept,faculty,toString)
+```
+
+b. extract Professors of each dept seperately
+```{r}
+prof<-faculty[faculty$Designation=="Professor",c("Name","Dept")]
+aggregate(Name~Dept,prof,toString)
+```
+
+c. extract people who earn more than 1.5 lakh in each dept where their designation is prof,associate or assistant
+```{r}
+ppl<-faculty[faculty$Salary>150000,c("Name","Dept")]
+aggregate(Name~Dept,ppl,toString)
+```
+
+d.Find out the cost of professors in each dept .(sum up their salary to get cost of them)
+```{r}
+prof<-faculty[faculty$Designation=="Professor",]
+aggregate(Salary~Dept,prof,sum)
+```
+
+e. Find the cost of each dept faculty and average cost of faculty 
+```{r}
+cost<-aggregate(Salary~Dept,faculty,sum)
+cost
+avg_cost<-aggregate(Salary~Dept,faculty,mean)
+avg_cost
+```
+
+
+f.Which dept has highest average and lowest  cost of faculty
+```{r}
+#highest average 
+highavg_sal<-aggregate(Salary~Dept,faculty,mean)
+highavg_sal[which.max(highavg_sal$Salary),]
+#lowest cost
+lowval<-aggregate(Salary~Dept,faculty,mean)
+lowval[which.min(lowval$Salary),]
+```
+Q3
+
+```{r}
+student<-read.csv('Q2a.csv',header=TRUE)
+head(student)
+```
+
+i. Store students marks numerically, transform into grades and store in new dataframe
+
+```{r}
+library(plyr)
+
+student1 <-transform(student, Sub1=as.factor(mapvalues(Sub1,c(80:100,60:79,40:59,0:39),c(rep("A",21),rep("B",20),rep("C",20),rep("D",40)))))
+                               
+student1
+
+
+#similarly for other subs
+
+```
+
+ii. Check whether students grades are identical or not in each subject
+```{r}
+identical(student$Sub1,student$Sub2,student$Sub3,student$Sub4,student$Sub5)
+```
+
+iii. Extract students' marks in each subject separately. If the student has scored greater than 80 map it as "good", if it is between (80 and 60) map it as "moderate", if it is between (40 and 60) map it as "need improvement", else map it as "poor".
+
+```{r}
+student1 <-transform(student, Sub1=as.factor(mapvalues(Sub1,c(80:100,60:79,40:59,0:39),c(rep("good",21),rep("moderate",20),rep("need improvement",20),rep("poor",40)))))
+                               
+student1
+
+#similarly for other subjects
+```
+
+iv. Consider dataset given in (1.a) , map the S,A, grades as " GOOD"; map ,B,C grades as "average", D,E grades as "below average"; 'F' grade as "poor".
+
+```{r}
+library(plyr)
+
+student1 <-transform(student, Sub1=as.factor(mapvalues(Sub1,c("S","A","B","C","D","E","F"),c(rep("GOOD",1),rep("GOOD",1),rep("average",1),rep("average",1),rep("below average",1),rep("below average",1),rep("poor",1)))))
+                               
+student1
+
+#similarly for other subjects
+
+```
+
+v. Transform dept names to numerical data.
+```{r}
+stud1<-transform(student,Dept=as.numeric(Dept))
+stud1
+```
+
+vi. Using factor() and mapvalues() convert dept names to numerical data.
+```{r}
+library("plyr")
+stud2<-transform(student,Dept=as.factor(mapvalues(Dept,c("CSE","ISE"),c(1,2))))
+stud2
+```
+Q4
+
+
+```{r}
+student<-read.csv('Q2a.csv',header=TRUE)
+head(student)
+```
+
+```
+
+a. Create table from student data with USN and names only.
+
+```{r}
+table(student$Names,student$USN)
+
+```
+
+b. Display the typeof each column.
+```{r}
+sapply(student,typeof)
+```
+```{r}
+
+```
+
+c. c.	Write a function to provide recommendations of students about their performance in the exams  like "Good", "Moderate", "Need improvement" ,etc., 
+```{r}
+ calculateResult <- function(x) {
+   if(x >= 80) {
+     res <- "Good"
+   } else if(x >= 60 & x<80) {
+     res <- "Moderate"
+   } else if(x >= 40 & x<60) {
+     res <- "Need Improvement"
+   } else {
+     res <- "Poor"
+  }
+  #res
+}
+
+
+for(i in 1:length(sub3)){
+result[i]<-calculateResult(sub3[i])
+}
+final<-data.frame(student$Names,result)
+final
+```
+ 
+
+
+
+d. Write a function to perform statistical analysis of students data.
+```{r}
+
+Summary_sub <- function(x) {
+  ans<-c(mean=mean(x), median=median(x), sd=sd(x))
+
+}
+ 
+sub2<-student$Sub2
+ans<-Summary_sub(sub2)
+ans
+```
+
+e. Use sapply to perform 1.c, 1d
+```{r}
+
+#performing 1.c
+
+ calculateResult <- function(x) {
+   if(x >= 80) {
+     res <- "Good"
+   } else if(x >= 60 & x<80) {
+     res <- "Moderate"
+   } else if(x >= 40 & x<60) {
+     res <- "Need Improvement"
+   } else {
+     res <- "Poor"
+  }
+  #res
+}
+
+sub1<-student$Sub1
+ans<-sapply(sub1,FUN=calculateResult)
+ans
+d<-data.frame(student$Names,ans)
+d
+
+#performing 1.d
+
+calculate<- function(x){
+res<-c(mean=mean(x),median=median(x),sd=sd(x))
+ #res
+}
+sub2<-student$Sub2
+ans2<-sapply(sub2,FUN=calculate)
+ans2
+
+
+
+```
+Q5 AND Q6
+
+#QUESTION 5 TILL e
+
+```{r}
+faculty<-read.csv('Q3a.csv',header = TRUE)
+head(faculty)
+```
+
+a. Store faculty salary numerically, transform into factor.( eg. 50000 to 75000 as 1, 75000 to 100000 as 2 , and so on)
+
+```{r}
+fac_cut<-cut(faculty$Salary, breaks=c(50000, 75000, 100000, 125000,150000,175000,200000,Inf))
+str(fac_cut)
+
+```
+
+b. Check whether faculty paper publication count and number of training program attended are same or not.
+```{r}
+identical(faculty$Papers.Published,faculty$Training)
+```
+
+c. Extract paper published count separately. If the count is grater than 15 map it as "Excellent", if it is (10-15 )map it as "good", if it is (5 to 10) map it as " moderate"), if it is (1-5) map it as "need to improve", else "poor, start your research".
+
+```{r}
+library(plyr)
+faculty.paper <-transform(faculty,
+Papers.Published=as.factor(mapvalues(Papers.Published,c(16:30,11:15,6:10,1:5,0),c(rep("Excellent",15),rep("Good",5),rep("Moderate",5),rep("Need to improve",5),rep("Poor,start research",1)))))
+
+faculty.paper
+```
+
+d. Consider the solution of 1c. Map "Excellent", "good" as " Good performers". Map " Moderate" and "need to improve" as " Ok, Keep it up". Else " map to " You may be fired!"
+
+```{r}
+library(plyr)
+
+faculty.paper <-transform(faculty,
+Papers.Published=as.factor(mapvalues(Papers.Published,c(16:30,11:15,6:10,1:5,0),c(rep("Excellent",15),rep("Good perofrmers",5),rep("Ok, Keep it up",5),rep("Ok, Keep it up",5),rep("You may be fired!",1)))))
+
+faculty.paper
+
+```
+
+e. Transform designations to numerical data
+```{r}
+fac1<-transform(faculty,Designation=as.numeric(Designation))
+fac1
+
+```
+
+
+#QUESTION 6 
+
+
+
+a. Using factor() and mapvalues() convert designations to numerical data.
+```{r}
+library("plyr")
+fac2<-transform(faculty,Designation=as.factor(mapvalues(Designation,c("Professor","Assistant Professor","Assosciate Professor"),c(1,2,3))))
+fac2
+```
+
+b. create table for faculty names and designations.
+```{r}
+table(faculty$Name,faculty$Designation)
+```
+
+c.	Write a function to provide recommendation about faculty performance based on the number of papers published and number of training programs attended. Like Good, Moderate, Need improvement 
+```{r}
+
+assign <- function(x) 
+{
+ if(x >= 15) {
+    res <- "Excellent"
+   } else if(x >= 10 & x<15) {
+     res <- "Good"
+   } else if(x >= 5 & x<10) {
+     res <- "Moderate"
+   } else if(x>=3 & x<5){
+     res <- "Need to improve"
+   }
+   else{
+     res<-"Poor,start your research"
+   }
+   #res
+}
+
+  papers<-faculty[,"Papers.Published"]
+  
+  for(i in 1:length(papers)){
+  result[i]<-assign(papers[i])
+   }
+ 
+  f2<-data.frame(faculty$Name,result)
+  f2
+
+
+
+```
+
+d. Write a function to perform statistical analysis of faculty data to identify faculty performance of depts.
+```{r}
+
+Summary_fac <- function(x) {
+ ans<-c(mean=mean(x), median=median(x), sd=sd(x))
+#   ans
+}
+# 
+f<-faculty[faculty$Dept=="CSE",]
+ans<-Summary_fac(f$Papers.Published)
+ans
+
+f1<-faculty[faculty$Dept=="ISE",]
+ans<-Summary_fac(f1$Papers.Published)
+ans
+```
+
+e. Use sapply to perform all the above functions.
+```{r}
+assignComment <- function(x) 
+{
+ if(x >= 15) {
+    res <- "Excellent"
+   } else if(x >= 10 & x<15) {
+     res <- "Good"
+   } else if(x >= 5 & x<10) {
+     res <- "Moderate"
+   } else if(x>=1 & x<5){
+     res <- "Need to improve"
+   }
+   else{
+     res<-"Poor,start your research"
+   }
+   #res
+}
+
+  papers<-faculty[,"Papers.Published"]
+  ans<-sapply(papers,FUN=assignComment)
+  f<-data.frame(faculty$Name,ans)
+  
+ f
+```
+
+```{r}
+assignImplication <- function(x) 
+{
+ if(x =="Excellent"| x=="Good") {
+    res <- "Good Perfformers"
+  } else if(x =="Moderate" | x=="Need to improve") {
+    res <- "Ok,Keep it up"
+  } 
+  else{
+    res<-"You may be fired!"
+  }
+  res
+}
+
+ comment<-f[,"ans"]
+ ans<-sapply(comment,FUN=assignImplication)
+ f2<-data.frame(faculty$Name,ans)
+ 
+f2
+```
+Q7
+```{r}
+student<-read.csv('Q4a.csv',header = TRUE)
+head(student)
+
+```
+
+a. Plot , in each dept, how many students have scored above 9 SGPA
+```{r}
+s<-student[student$SGPA>9,c("Name","Dept.Name")]
+s
+plot(s$Dept.Name)
+
+```
+
+b. Create subset of students , who have scored S grade in any subject and failed in any subject.
+```{r}
+sub<-subset(student,rowSums(student=="S")>=1 & rowSums(student=="F")>=1)
+sub
+```
+
+c.Find out average SGPA of each dept students and Find out average score of each subject for each dept.
+```{r}
+#avg SGPA
+aggregate(SGPA~Dept.Name,student,mean)
+#avg score of each sub
+aggregate(as.numeric(Sub1)~Dept.Name,student,mean)
+```
+
+d. Extract 10 toppers of each dept.
+```{r}
+
+s<-student[order(-student$SGPA),]
+
+b<-s[s$Dept.Name=="BT",]
+qb<-data.frame(b[1:10,c("Name","Dept.Name","SGPA")])
+qb
+cs<-s[s$Dept.Name=="CSE",]
+qcs<-data.frame(cs[1:10,c("Name","Dept.Name","SGPA")])
+qcs
+e<-s[s$Dept.Name=="ECE",]
+qe<-data.frame(e[1:10,c("Name","Dept.Name","SGPA")])
+qe
+
+```
+e. Sort students details of each dept separately.
+```{r}
+student[order(student$Dept.Name,student$Name),]
+```
+
+f.Search for a particular student name in the data set, and retrieve his/her details
+```{r}
+subset(student,Name=="Aravind")
+```
+Q8
+```{r}
+faculty<-read.csv('Q3a.csv',header=TRUE)
+head(faculty)
+```
+
+a. Plot, in each dept, how many faculty are earning more than 1 lakh.
+```{r}
+f<-faculty[faculty$Salary>100000,c("Name","Dept")]
+f
+plot(f$Dept)
+
+```
+
+b. create subset of faculty, who have published more than 10 papers and their designation is Associate professor.
+```{r}
+sub<-subset(faculty,Designation=="Assosciate Professor" & Papers.Published>4)
+sub
+```
+
+c. Find out average papers published by each dept, designation wise and Find out Average training programs attended by faculty each dept wise.
+```{r}
+#avg papers
+aggregate(Papers.Published~Dept+Designation,faculty,mean)
+#avg training 
+aggregate(Training~Dept,faculty,mean)
+```
+
+d. Extract top 3 performers among faculty dept wise(more papers published and more training programmes attended)
+```{r}
+f<-faculty[order(-faculty$Papers.Published+-faculty$Training),]
+
+cs<-f[f$Dept=="CSE",]
+fq<-data.frame(cs[1:3,c("Name","Dept","Training","Papers.Published")])
+fq
+
+is<-f[f$Dept=="ISE",]
+iq<-data.frame(is[1:3,c("Name","Dept","Training","Papers.Published")])
+iq
+
+```
+
+e. Sort faculty details , dept wise separately
+```{r}
+faculty[order(faculty$Dept,faculty$Name),]
+
+```
+
+f. Search for faculty name in the data set and retrive his/her details
+```{r}
+subset(faculty,Name=="Mithra")
+
+```
+Q9,10,11
+#QUESTION 9 till e 
+
+```{r}
+f<-read.csv('Q5a.csv',header=TRUE)
+f
+```
+
+a. Change the column names of faculty data set. 
+```{r}
+colnames(f)<-c("Names","Desig","Sal","Department","Trainings","Papers","Gender")
+f
+#summary(f)
+
+```
+
+b. Use map values() , as.factor() and transform ()
+   -- to change the designation column to have numerical values. 1- Prof, 2-Asso.Prof,          3-Asst.Prof;
+   --to change gender column 1-Male, 2-Female
+```{r}
+library(plyr)
+f<-transform(f,
+             Desig=as.factor(mapvalues(Desig,c("Professor","Assosciate Professor","Assistant Professor"),c(1,2,3))),
+             Gender=as.factor(mapvalues(Gender,c("M","F"),c(1,2))))
+f
+
+```
+
+c. Using with() and tapply() , calculate the mean training programs attended and no. of papers published in each department. Format it for markdown.
+DONT KNOW
+```{r}
+library(knitr)
+library(rmarkdown)
+
+kable(with(f,tapply(Trainings,INDEX=list(Department,Papers),mean)),format="markdown")
+
+```
+
+d. Using with() and aggregate() , calculate the mean training programs attended and no. of papers published in each department. Format it for markdown.
+```{r}
+library(knitr)
+library(rmarkdown)
+
+kable(with(f,aggregate(Trainings,by=list(Department,Papers),mean)),format="markdown")
+
+```
+
+e. Check whether the mean value of no. of papers published in depts. are influenced by training programs attended and designation. Do regression analysis using aggregate().
+```{r}
+aggregate(Papers~Trainings+Desig,f,mean)
+
+```
+
+
+# QUESTION 10 
+
+
+a. Create the table output for designation and papers published. Use with() and table().
+```{r}
+ans<-with(f,table(Papers,Desig))
+ans
+```
+
+b. Find the odds of lower no. of paper published with respect to designation and no.of training programs attended using the output of question (f).
+DONNO
+```{r}
+ans.or<-as.numeric(ans[1,1])/as.numeric(ans[1,2])/as.numeric(ans[1,3])/as.numeric(ans[2,1])/as.numeric(ans[2,2])/as.numeric(ans[2,3])/as.numeric(ans[3,1])/as.numeric(ans[3,2])/as.numeric(ans[3,3])/as.numeric(ans[4,1])/as.numeric(ans[4,2])/as.numeric(ans[4,3])/as.numeric(ans[5,1])/as.numeric(ans[5,2])/as.numeric(ans[5,3])/as.numeric(ans[6,1])/as.numeric(ans[6,2])/as.numeric(ans[6,3])
+ans.or
+```
+
+c. Is the designation affects the training programs attended? Check it with the data. Prove it.
+```{r}
+with(f,cor(as.numeric(Desig), Trainings))
+
+```
+
+d. Find the correlation of papers published and training programs attended using with(), cor().
+```{r}
+with(f,cor(Papers, Trainings))
+```
+
+e. Find the correlation of training programs attended and designation using with(), cor().
+```{r}
+with(f,cor(Trainings,as.numeric(Desig)))
+```
+
+f. Using by() combine the operations of above questions (i) and (j) using function. And do the correlation analysis using cor() with in the function.
+```{r}
+by(data = f[c("Papers", "Trainings")], 
+   INDICES = f["Desig"], 
+   FUN = function(x) {cor(x[,1], x[,2])})
+
+```
+
+
+
+#QUESTION 11
+
+
+a. Plot average training programs attended against designations(only 3 designations) of the institution using plot()
+
+```{r}
+f1<-aggregate(Trainings~Desig,f,mean)
+plot(f1$Desig, f1$Trainings)
+
+```
+
+b. Plot average papers published against designations of the institution using plot().
+
+```{r}
+f2<-aggregate(Papers~Desig,f,mean)
+f2
+plot(f2$Desig, f2$Papers)
+```
+
+c. Change the x axis , color and y-axis labels respectively. Add legends.
+```{r}
+# plot(f2$Desig, f2$Papers,xlab="Designation",ylab="Papers Published",main="Designation vs Papers Published",col=5)
+
+par(mfrow = c(1,2))
+with(f, plot(Desig, Trainings, 
+                   main = "Designation vs Trainings", 
+                   xlab = "Designation", 
+                   ylab = "Tranings",col=7))
+with(f, plot(Desig, Papers, 
+                   main = "Designation vs Papers Published", 
+                   xlab = "Designation", 
+                    ylab = "Papers Published ",col=f$Desig))
+legend("bottomright", c("Professor","Associate","Assistant"), col=c(1,2,3),pch=12)
+
+```
+
+d. Plot the above graphs in (l) and (m) using with() and plot().
+```{r}
+par(mfrow = c(1,2))
+with(f, plot(Desig, Trainings, 
+                   main = "Designation vs Trainings", 
+                   xlab = "Designation", 
+                   ylab = "Tranings",col=7))
+with(f, plot(Desig, Papers, 
+                   main = "Designation vs Papers Published", 
+                   xlab = "Designation", 
+                    ylab = "Papers Published ",col=8))
+
+
+```
+
+e. Draw scatter plot for above questions. Draw box plot for above question. Draw bar plots for above questions. Draw single variable plots for above question.
+```{r}
+par(mfrow = c(1,2))
+with(f, plot(as.numeric(Desig), Trainings,
+                   main = "Designation vs Trainings",
+                   xlab = "Designation",
+                   ylab = "Tranings",col=1))
+with(f, plot(as.numeric(Desig), Papers,
+                   main = "Designation vs Papers Published",
+                   xlab = "Designation",
+                    ylab = "Papers Published ",col=2))
+
+par(mfrow = c(1,2))
+with(f, boxplot(as.numeric(Desig), Trainings, 
+                   main = "Designation vs Trainings", 
+                   xlab = "Designation", 
+                   ylab = "Tranings",col=1))
+with(f, boxplot(as.numeric(Desig), Papers, 
+                   main = "Designation vs Papers Published", 
+                   xlab = "Designation", 
+                    ylab = "Papers Published ",col=2))
+
+par(mfrow = c(1,2))
+with(f, barplot(as.numeric(Desig), Trainings, 
+                   main = "Designation vs Trainings", 
+                   xlab = "Designation", 
+                   ylab = "Tranings",col=1))
+with(f, barplot(as.numeric(Desig), Papers, 
+                   main = "Designation vs Papers Published", 
+                   xlab = "Designation", 
+                    ylab = "Papers Published ",col=2))
+
+```
+
+
+
+
+
+```{r}
+
+with(f,plot(Trainings))
+
+```
+
+f.plot the prof, asst.prof and asso.prof average performance in different colors using rep(), colorpalatte functions. Represent each designation average performance(no.of.papers published and training pgms atteneded) by different symbols.
+
+```{r}
+c1<-subset(f,Desig=="Assosciate Professor",c("Papers","Trainings"))
+y1<-mean(c1$Papers+ c1$Trainings)
+c2<-subset(f,Desig=="Assistant Professor",c("Papers","Trainings"))
+y2<-mean(c2$Papers+c1$Trainings)
+c3<-subset(f,Desig=="Professor",c("Papers","Trainings"))
+y3<-mean(c3$Papers+c3$Trainings)
+x<-c(1,2,3)
+y<-c(y1,y2,y3)
+
+
+p<-c(19,23,15)
+ plot(x, y, main = "avg performance", 
+                   xlab = "assoc prof", 
+                   ylab = "Tranings",col=palette(),pch=p)
+ 
+ with(f,text( x =1 ,y=y1, labels ="assoc prof",
+                pos = rep(c(1, 3, 1), c(5, 1, 2)))) 
+
+
+  with(f,text(x =2,y=y2, labels ="assis prof",
+                pos = rep(c(1, 3, 1), c(5, 1, 2)))) 
+  with(f,text(x =3,y=y3, labels ="prof",
+                pos = rep(c(1, 3, 1), c(5, 1, 2)))) 
+
+```
+Q12,13
+#QUESTION 12 TILL f
+
+```{r}
+
+
+student<-read.csv("Q6a.csv",header=TRUE)
+head(student)
+```
+
+```{r}
+str(student)
+#Sub2 is becoming factors as they contain String data
+```
+a. Make some string entries in student marks. Make some numerical entries in names
+```{r}
+x <- data.frame("SN" = 1:2, "Age" = c(21,15), "Name" = c("John","Dora"))
+
+str(x) 
+```
+
+
+
+sub2<-student$Sub2
+sub2
+as.numeric(as.character(sub2))
+
+
+b. using gsub remove character data in marks column. Using gsub remove numerical data in name column
+```{r}
+sub2
+gsub("[^0-9]","",sub2)
+
+names<-student$Names
+gsub("[^A-Za-z]","",names)
+```
+
+c. Clean the name and marks column and put it in a new student data set variable using transform function
+```{r}
+sub2.clean <- as.numeric(gsub("[^0-9.]", "", sub2))
+names.clean<-gsub("[^A-Za-z]","",names) #NOT SURE IF NAMES CLEAN IS RIGHT
+new_stud<-transform(student, Sub2 = sub2.clean,Names=names.clean)
+new_stud
+
+```
+
+d. use table to get summary of student data
+```{r}
+table(student["Sub1"])
+table(student["Dept"])
+
+```
+
+e. Use sapply to perform the cleaning of data mentioned above
+SHOULD BE DONE FOR NAMES ALSO MOSTLY
+```{r}
+
+clean<-function(student)
+{
+  sub2.clean <- as.numeric(gsub("[^0-9.]", "", sub2))
+  sub2.clean
+  new_stud<-transform(student, Sub2 = sub2.clean)
+  new_stud
+}
+
+sapply(student,FUN=clean)
+
+```
+
+f. use lapply to perform the cleaning of data mentioned above
+SHOULD BE DONE FOR NAMES ALSO MOSTLY
+```{r}
+clean<-function(student)
+{
+  sub2.clean <- as.numeric(gsub("[^0-9.]", "", sub2))
+  #sub2.clean
+  new_stud<-transform(student, Sub2 = sub2.clean)
+  new_stud
+}
+
+lapply(student,FUN=clean)
+
+```
+
+
+#QUESTION 13 
+
+
+
+a. Display the summary using summary()
+```{r}
+summary(student)
+
+```
+
+b. Include gender details for students.Add Mr or Ms. For each student, using paste command . Display all students details.
+```{r}
+f=student[student$Gender=="F",]
+m=student[student$Gender=="M",]
+
+ a<- paste("Mrs",f$Names,sep=" ")
+ b<- paste("Mr",m$Names,sep=" ")
+  
+f1<-data.frame(a,f)
+f1
+f2<-data.frame(b,m)
+f2
+
+```
+c. Add Mr or Ms. For each student, using paste command . Display all students details.
+```{r}
+f=student[student$Gender=="F",]
+m=student[student$Gender=="M",]
+
+  paste("Mrs",f$Names)
+  paste("Mr",m$Names)
+```
+
+d. Define user defined functions to perform the above operations.
+```{r}
+naming<-function(Gender)
+{
+  
+  if(Gender=='F')
+    res="Mrs "
+  else
+    res="Mr "
+  res
+}
+names=student$Gender
+res<-sapply(names,FUN=naming)
+d<-data.frame(res,student)
+d
+```
+
+e. Use while loop, for loop to access students marks and find the grades. Put this with in a function
+
+```{r}
+grade<-function(s1,s2,s3,s4,s5)
+{
+
+  tot<-(s1+s2+s3+s4+s5)/5
+  if(tot>=90)
+    res<-"S"
+  else if(tot>=75)
+    res<-"A"
+  else if(tot>=60)
+    res<-"B"
+  else if(tot>=50)
+    res<-"C"
+  else
+    res<-"F"
+  res
+}
+
+# #while
+ i=1
+ while(i <= nrow(student))  
+ {
+   s1<-as.numeric(student[i,"Sub1"])
+   s2<-as.numeric(student[i,"Sub2"])
+   s3<-as.numeric(student[i,"Sub3"])
+   s4<-as.numeric(student[i,"Sub4"])
+   s5<-as.numeric(student[i,"Sub5"])
+   g<-grade(s1,s2,s3,s4,s5)
+   print(as.character(student[i,"Names"]))
+   print(g)
+   i<-i+1
+ }
+
+
+```
+
+f. Use apply, sapply, lapply and tapply to perform the above operation over all the columns of studentsdata set. Use with() function to apply the above operation over students dataset.Use any() function to apply the above operation over students dataset.
+```{r}
+grade<-function(tot)
+{
+  if(tot>=90)
+    res<-"S"
+  else if(tot>=75)
+    res<-"A"
+  else if(tot>=60)
+    res<-"B"
+  else if(tot>=50)
+    res<-"C"
+  else
+    res<-"F"
+  #res
+}
+
+mark<-c(as.numeric(student[,"Sub1"]))
+#mark
+sapply(mark,FUN=grade)
+lapply(mark,FUN=grade)
+tapply(mark,FUN=grade,INDEX=letters[1:10])
+
+
+mark<-c(as.numeric(student[,"Sub2"]))
+#mark
+sapply(mark,FUN=grade)
+lapply(mark,FUN=grade)
+tapply(mark,FUN=grade,INDEX=letters[1:10])
+```
+
+#part 2
+```{r}
+mark<-c(as.numeric(student[,"Sub1"]))
+with(student,sapply(mark,FUN=grade))
+#DO FOR ALL SUB AND LAPPLY,TAPPLY FUNCTIONS
+
+```
+#part 3
+```{r}
+mark<-c(as.numeric(student[,"Sub1"]))
+if(any(mark>0))
+sapply(mark,FUN=grade)
+
+#DO FOR ALL SUB AND LAPPLY,TAPPLY FUNCTIONS
+```
+Q14
+```{r}
+
+s<-read.csv('Q7a.csv',header=TRUE)
+s
+```
+
+a. Change the column names of Student data set. 
+```{r}
+colnames(s)<-c("Name","Stud_USN","Stud_Dept","S1","S2","S3","S4","S5","Stud_Grade","Stud_Gender","Stud_CGPA")
+s
+summary(s)
+
+```
+
+b. Use map values() , as.factor() and transform ()
+c To change the Grade column(S,A,B,etc) to have numerical values. 1- S, 2-A,           3-B,etc.;
+d To change gender column 1-Male, 2-Female
+```{r}
+library(plyr)
+s<-transform(s,
+             Stud_Grade=as.factor(mapvalues(Stud_Grade,c("S","A","B","C","D","E","F"),c(1,2,3,4,5,6,7))),
+             Stud_Gender=as.factor(mapvalues(Stud_Gender,c("M","F"),c(1,2))))
+s
+
+```
+
+e. Using with() and tapply() , calculate the mean of marks in each subject scored by students in each
+department and mean of CGPA of students in each dept with respect to gender. Format it for markdown.
+DONNO
+```{r}
+library(knitr)
+library(rmarkdown)
+
+kable(with(s,tapply(S1, INDEX = list(Stud_Dept,Stud_Gender),mean)),format="markdown")
+kable(with(s,tapply(S2, INDEX = list(Stud_Dept,Stud_Gender),FUN=mean)),format="markdown")
+kable(with(s,tapply(S3, INDEX = list(Stud_Dept,Stud_Gender),FUN=mean)),format="markdown")
+kable(with(s,tapply(S4, INDEX = list(Stud_Dept,Stud_Gender),FUN=mean)),format="markdown")
+kable(with(s,tapply(S5, INDEX = list(Stud_Dept,Stud_Gender),FUN=mean)),format="markdown")
+
+kable(with(s,tapply(Stud_CGPA, INDEX = list(Stud_Dept,Stud_Gender), FUN=mean)),format="markdown")
+```
+
+f.Using with() and aggregate() , calculate the mean of marks in each subject scored by students in each department and the gender of students in each dept. Format it for markdown.
+```{r}
+kable(with(s,aggregate(S1,by=list(Stud_Dept,Stud_Gender),FUN=mean)),format="markdown")
+kable(with(s,aggregate(S2,by=list(Stud_Dept,Stud_Gender),FUN=mean)),format="markdown")
+kable(with(s,aggregate(S3,by=list(Stud_Dept,Stud_Gender),FUN=mean)),format="markdown")
+kable(with(s,aggregate(S4,by=list(Stud_Dept,Stud_Gender),FUN=mean)),format="markdown")
+kable(with(s,aggregate(S5,by=list(Stud_Dept,Stud_Gender),FUN=mean)),format="markdown")
+
+```
+
+
+
