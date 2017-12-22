@@ -1,0 +1,164 @@
+
+#QUESTION 5 TILL e
+
+```{r}
+faculty<-read.csv('Q3a.csv',header = TRUE)
+head(faculty)
+```
+
+a. Store faculty salary numerically, transform into factor.( eg. 50000 to 75000 as 1, 75000 to 100000 as 2 , and so on)
+
+```{r}
+fac_cut<-cut(faculty$Salary, breaks=10)
+str(fac_cut)
+
+```
+
+b. Check whether faculty paper publication count and number of training program attended are same or not.
+```{r}
+identical(faculty$Papers.Published,faculty$Training)
+```
+
+c. Extract paper published count separately. If the count is grater than 15 map it as "Excellent", if it is (10-15 )map it as "good", if it is (5 to 10) map it as " moderate"), if it is (1-5) map it as "need to improve", else "poor, start your research".
+
+```{r}
+library(plyr)
+faculty.paper <-transform(faculty,
+Papers.Published=as.factor(mapvalues(Papers.Published,c(16:30,11:15,6:10,1:5,0),c(rep("Excellent",15),rep("Good",5),rep("Moderate",5),rep("Need to improve",5),rep("Poor,start research",1)))))
+
+faculty.paper
+```
+
+d. Consider the solution of 1c. Map "Excellent", "good" as " Good performers". Map " Moderate" and "need to improve" as " Ok, Keep it up". Else " map to " You may be fired!"
+
+```{r}
+library(plyr)
+
+faculty.paper <-transform(faculty,
+Papers.Published=as.factor(mapvalues(Papers.Published,c(16:30,11:15,6:10,1:5,0),c(rep("Excellent",15),rep("Good perofrmers",5),rep("Ok, Keep it up",5),rep("Ok, Keep it up",5),rep("You may be fired!",1)))))
+
+faculty.paper
+
+```
+
+e. Transform designations to numerical data
+```{r}
+fac1<-transform(faculty,Designation=as.numeric(Designation))
+fac1
+
+```
+
+
+#QUESTION 6 
+
+
+
+a. Using factor() and mapvalues() convert designations to numerical data.
+```{r}
+library("plyr")
+fac2<-transform(faculty,Designation=as.factor(mapvalues(Designation,c("Professor","Assistant Professor","Assosciate Professor"),c(1,2,3))))
+fac2
+```
+
+b. create table for faculty names and designations.
+```{r}
+table(faculty$Name,faculty$Designation)
+```
+
+c.	Write a function to provide recommendation about faculty performance based on the number of papers published and number of training programs attended. Like Good, Moderate, Need improvement 
+```{r}
+
+assign <- function(x) 
+{
+ if(x >= 15) {
+    res <- "Excellent"
+   } else if(x >= 10 & x<15) {
+     res <- "Good"
+   } else if(x >= 5 & x<10) {
+     res <- "Moderate"
+   } else if(x>=3 & x<5){
+     res <- "Need to improve"
+   }
+   else{
+     res<-"Poor,start your research"
+   }
+   #res
+}
+
+  papers<-faculty[,"Papers.Published"]
+  
+  for(i in 1:length(papers)){
+  result[i]<-assign(papers[i])
+   }
+ 
+  f2<-data.frame(faculty$Name,result)
+  f2
+
+
+
+```
+
+d. Write a function to perform statistical analysis of faculty data to identify faculty performance of depts.
+```{r}
+
+Summary_fac <- function(x) {
+ ans<-c(mean=mean(x), median=median(x), sd=sd(x))
+#   ans
+}
+# 
+f<-faculty[faculty$Dept=="CSE",]
+ans<-Summary_fac(f$Papers.Published)
+ans
+
+f1<-faculty[faculty$Dept=="ISE",]
+ans<-Summary_fac(f1$Papers.Published)
+ans
+```
+
+e. Use sapply to perform all the above functions.
+```{r}
+assignComment <- function(x) 
+{
+ if(x >= 15) {
+    res <- "Excellent"
+   } else if(x >= 10 & x<15) {
+     res <- "Good"
+   } else if(x >= 5 & x<10) {
+     res <- "Moderate"
+   } else if(x>=1 & x<5){
+     res <- "Need to improve"
+   }
+   else{
+     res<-"Poor,start your research"
+   }
+   #res
+}
+
+  papers<-faculty[,"Papers.Published"]
+  ans<-sapply(papers,FUN=assignComment)
+  f<-data.frame(faculty$Name,ans)
+  
+ f
+```
+
+```{r}
+assignImplication <- function(x) 
+{
+ if(x =="Excellent"| x=="Good") {
+    res <- "Good Perfformers"
+  } else if(x =="Moderate" | x=="Need to improve") {
+    res <- "Ok,Keep it up"
+  } 
+  else{
+    res<-"You may be fired!"
+  }
+  res
+}
+
+ comment<-f[,"ans"]
+ ans<-sapply(comment,FUN=assignImplication)
+ f2<-data.frame(faculty$Name,ans)
+ 
+f2
+```
+

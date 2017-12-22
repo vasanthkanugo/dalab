@@ -1,0 +1,52 @@
+```{r}
+
+s<-read.csv('Q7a.csv',header=TRUE)
+s
+```
+
+a. Change the column names of Student data set. 
+```{r}
+colnames(s)<-c("Name","Stud_USN","Stud_Dept","S1","S2","S3","S4","S5","Stud_Grade","Stud_Gender","Stud_CGPA")
+s
+summary(s)
+
+```
+
+b. Use map values() , as.factor() and transform ()
+c To change the Grade column(S,A,B,etc) to have numerical values. 1- S, 2-A,           3-B,etc.;
+d To change gender column 1-Male, 2-Female
+```{r}
+library(plyr)
+s<-transform(s,
+             Stud_Grade=as.factor(mapvalues(Stud_Grade,c("S","A","B","C","D","E","F"),c(1,2,3,4,5,6,7))),
+             Stud_Gender=as.factor(mapvalues(Stud_Gender,c("M","F"),c(1,2))))
+s
+
+```
+
+e. Using with() and tapply() , calculate the mean of marks in each subject scored by students in each
+department and mean of CGPA of students in each dept with respect to gender. Format it for markdown.
+DONNO
+```{r}
+library(knitr)
+library(rmarkdown)
+
+kable(with(s,tapply(S1, INDEX = list(Stud_Dept,Stud_Gender),mean)),format="markdown")
+kable(with(s,tapply(S2, INDEX = list(Stud_Dept,Stud_Gender),FUN=mean)),format="markdown")
+kable(with(s,tapply(S3, INDEX = list(Stud_Dept,Stud_Gender),FUN=mean)),format="markdown")
+kable(with(s,tapply(S4, INDEX = list(Stud_Dept,Stud_Gender),FUN=mean)),format="markdown")
+kable(with(s,tapply(S5, INDEX = list(Stud_Dept,Stud_Gender),FUN=mean)),format="markdown")
+
+kable(with(s,tapply(Stud_CGPA, INDEX = list(Stud_Dept,Stud_Gender), FUN=mean)),format="markdown")
+```
+
+f.Using with() and aggregate() , calculate the mean of marks in each subject scored by students in each department and the gender of students in each dept. Format it for markdown.
+```{r}
+kable(with(s,aggregate(S1,by=list(Stud_Dept,Stud_Gender),FUN=mean)),format="markdown")
+kable(with(s,aggregate(S2,by=list(Stud_Dept,Stud_Gender),FUN=mean)),format="markdown")
+kable(with(s,aggregate(S3,by=list(Stud_Dept,Stud_Gender),FUN=mean)),format="markdown")
+kable(with(s,aggregate(S4,by=list(Stud_Dept,Stud_Gender),FUN=mean)),format="markdown")
+kable(with(s,aggregate(S5,by=list(Stud_Dept,Stud_Gender),FUN=mean)),format="markdown")
+
+```
+

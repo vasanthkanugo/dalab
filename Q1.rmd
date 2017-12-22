@@ -1,0 +1,65 @@
+```{r}
+student<-read.csv('Q1a.csv',header=TRUE)
+head(student)
+```
+
+QUESTION 1
+a. Extract each dept students names separately
+```{r}
+aggregate(Name~Dept.Name,student,toString)
+```
+
+b. Extract S grade scores in all subjects in each dept seperately.
+```{r}
+s<-student[student$Sub1=="S"|student$Sub2=="S"|student$Sub3=="S"|student$Sub4=="S"|student$Sub5=="S", c("Name","Dept.Name")]
+
+aggregate(Name~Dept.Name,s,toString)
+```
+
+c. Extract students who have scored at least S grades in any 2 subjects
+```{r}
+student[rowSums(student=="S")>1,c("Name","Dept.Name")]
+```
+
+d. Extract students who have scored above 9 SGPA in each dept
+```{r}
+s1<-student[student$SGPA>9,c("Name","Dept.Name")]
+aggregate(Name~Dept.Name,s1,toString)
+
+```
+# now change all the grade value in each subject column to random marks and then execute these 2 querries
+e.store numerical data and transform to grades and store in new data frame
+
+
+```{r}
+library(plyr)
+
+student1 <-transform(student, Sub1=as.factor(mapvalues(Sub1,c(80:100,60:79,40:59,0:39),c(rep("A",21),rep("B",20),rep("C",20),rep("D",40)))))
+student1
+
+
+student2 <-transform(student1, Sub2=as.factor(mapvalues(Sub2,c(80:100,60:79,40:59,0:39),c(rep("A",21),rep("B",20),rep("C",20),rep("D",40)))))
+student2
+
+
+student3<-transform(student2, Sub3=as.factor(mapvalues(Sub3,c(80:100,60:79,40:59,0:39),c(rep("A",21),rep("B",20),rep("C",20),rep("D",40)))))
+student3
+
+
+student4 <-transform(student3, Sub4=as.factor(mapvalues(Sub4,c(80:100,60:79,40:59,0:39),c(rep("A",21),rep("B",20),rep("C",20),rep("D",40)))))
+student4
+
+
+student5 <-transform(student4, Sub5=as.factor(mapvalues(Sub5,c(80:100,60:79,40:59,0:39),c(rep("A",21),rep("B",20),rep("C",20),rep("D",40)))))
+student5
+
+```
+
+f.check wether student grades are identical or not in each subject
+```{r}
+identical(student$Sub1,student$Sub2,student$Sub3,student$Sub4,student$Sub5)
+```
+```{r}
+setequal(student$Sub1,student$Sub2)
+```
+

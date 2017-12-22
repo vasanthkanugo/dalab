@@ -1,0 +1,102 @@
+
+
+```{r}
+student<-read.csv('Q2a.csv',header=TRUE)
+head(student)
+```
+
+
+
+a. Create table from student data with USN and names only.
+
+```{r}
+table(student$Names,student$USN)
+
+```
+
+b. Display the typeof each column.
+```{r}
+sapply(student,typeof)
+```
+
+
+c. c.	Write a function to provide recommendations of students about their performance in the exams  like "Good", "Moderate", "Need improvement" ,etc., 
+```{r}
+ calculateResult <- function(x) {
+   if(x >= 80) {
+     res <- "Good"
+   } else if(x >= 60 & x<80) {
+     res <- "Moderate"
+   } else if(x >= 40 & x<60) {
+     res <- "Need Improvement"
+   } else {
+     res <- "Poor"
+  }
+  #res
+}
+
+
+for(i in 1:length(sub3)){
+result[i]<-calculateResult(sub3[i])
+}
+final<-data.frame(student$Names,result)
+final
+```
+ 
+
+
+
+d. Write a function to perform statistical analysis of students data.
+```{r}
+
+Summary_sub <- function(x) {
+  ans<-c(mean=mean(x), median=median(x), sd=sd(x))
+
+}
+ 
+sub2<-student$Sub2
+ans<-Summary_sub(sub2)
+ans
+```
+
+e. Use sapply to perform 1.c, 1d
+```{r}
+
+#performing 1.c
+
+ calculateResult <- function(x) {
+   if(x >= 80) {
+     res <- "Good"
+   } else if(x >= 60 & x<80) {
+     res <- "Moderate"
+   } else if(x >= 40 & x<60) {
+     res <- "Need Improvement"
+   } else {
+     res <- "Poor"
+  }
+  #res
+}
+
+sub1<-student$Sub1
+ans<-sapply(sub1,FUN=calculateResult)
+ans
+d<-data.frame(student$Names,ans)
+d
+
+#performing 1.d
+
+calculate<- function(x){
+res<-c(mean=mean(x),median=median(x),sd=sd(x))
+ #res
+}
+sub2<-student$Sub2
+ans2<-sapply(sub2,FUN=calculate)
+ans2
+
+
+
+```
+
+
+
+

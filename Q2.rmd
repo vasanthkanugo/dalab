@@ -1,0 +1,49 @@
+```{r}
+faculty<-read.csv('Q1b.csv',header=TRUE)
+head(faculty)
+```
+
+a. extract each dept faculty details separately
+```{r}
+aggregate(Name~Dept,faculty,toString)
+```
+
+b. extract Professors of each dept seperately
+```{r}
+prof<-faculty[faculty$Designation=="Professor",c("Name","Dept")]
+aggregate(Name~Dept,prof,toString)
+```
+
+c. extract people who earn more than 1.5 lakh in each dept where their designation is prof,associate or assistant
+```{r}
+ppl<-faculty[faculty$Salary>150000,c("Name","Dept")]
+aggregate(Name~Dept,ppl,toString)
+```
+
+d.Find out the cost of professors in each dept .(sum up their salary to get cost of them)
+```{r}
+prof<-faculty[faculty$Designation=="Professor",]
+aggregate(Salary~Dept,prof,sum)
+```
+
+e. Find the cost of each dept faculty and average cost of faculty 
+```{r}
+cost<-aggregate(Salary~Dept,faculty,sum)
+cost
+avg_cost<-aggregate(Salary~Dept,faculty,mean)
+avg_cost
+```
+
+
+f.Which dept has highest average and lowest  cost of faculty
+```{r}
+#highest average 
+highavg_sal<-aggregate(Salary~Dept,faculty,mean)
+highavg_sal[which.max(highavg_sal$Salary),]
+#lowest cost
+lowval<-aggregate(Salary~Dept,faculty,mean)
+lowval[which.min(lowval$Salary),]
+```
+
+
+

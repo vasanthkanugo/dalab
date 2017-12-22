@@ -1,0 +1,54 @@
+```{r}
+student<-read.csv('Q4a.csv',header = TRUE)
+head(student)
+
+```
+
+a. Plot , in each dept, how many students have scored above 9 SGPA
+```{r}
+s<-student[student$SGPA>9,c("Name","Dept.Name")]
+s
+plot(s$Dept.Name)
+
+```
+
+b. Create subset of students , who have scored S grade in any subject and failed in any subject.
+```{r}
+sub<-subset(student,rowSums(student=="S")>=1 & rowSums(student=="F")>=1)
+sub
+```
+
+c.Find out average SGPA of each dept students and Find out average score of each subject for each dept.
+```{r}
+#avg SGPA
+aggregate(SGPA~Dept.Name,student,mean)
+#avg score of each sub
+aggregate(as.numeric(Sub1)~Dept.Name,student,mean)
+```
+
+d. Extract 10 toppers of each dept.
+```{r}
+
+s<-student[order(-student$SGPA),]
+
+b<-s[s$Dept.Name=="BT",]
+qb<-data.frame(b[1:10,c("Name","Dept.Name","SGPA")])
+qb
+cs<-s[s$Dept.Name=="CSE",]
+qcs<-data.frame(cs[1:10,c("Name","Dept.Name","SGPA")])
+qcs
+e<-s[s$Dept.Name=="ECE",]
+qe<-data.frame(e[1:10,c("Name","Dept.Name","SGPA")])
+qe
+
+```
+e. Sort students details of each dept separately.
+```{r}
+student[order(student$Dept.Name,student$Name),]
+```
+
+f.Search for a particular student name in the data set, and retrieve his/her details
+```{r}
+subset(student,Name=="Aravind")
+```
+

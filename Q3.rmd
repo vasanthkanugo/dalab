@@ -1,0 +1,61 @@
+
+```{r}
+student<-read.csv('Q2a.csv',header=TRUE)
+head(student)
+```
+
+i. Store students marks numerically, transform into grades and store in new dataframe
+
+```{r}
+library(plyr)
+
+student1 <-transform(student, Sub1=as.factor(mapvalues(Sub1,c(80:100,60:79,40:59,0:39),c(rep("A",21),rep("B",20),rep("C",20),rep("D",40)))))
+                               
+student1
+
+
+#similarly for other subs
+
+```
+
+ii. Check whether students grades are identical or not in each subject
+```{r}
+identical(student$Sub1,student$Sub2,student$Sub3,student$Sub4,student$Sub5)
+```
+
+iii. Extract students' marks in each subject separately. If the student has scored greater than 80 map it as "good", if it is between (80 and 60) map it as "moderate", if it is between (40 and 60) map it as "need improvement", else map it as "poor".
+
+```{r}
+student1 <-transform(student, Sub1=as.factor(mapvalues(Sub1,c(80:100,60:79,40:59,0:39),c(rep("good",21),rep("moderate",20),rep("need improvement",20),rep("poor",40)))))
+                               
+student1
+
+#similarly for other subjects
+```
+
+iv. Consider dataset given in (1.a) , map the S,A, grades as " GOOD"; map ,B,C grades as "average", D,E grades as "below average"; 'F' grade as "poor".
+
+```{r}
+library(plyr)
+
+student1 <-transform(student, Sub1=as.factor(mapvalues(Sub1,c("S","A","B","C","D","E","F"),c(rep("GOOD",1),rep("GOOD",1),rep("average",1),rep("average",1),rep("below average",1),rep("below average",1),rep("poor",1)))))
+                               
+student1
+
+#similarly for other subjects
+
+```
+
+v. Transform dept names to numerical data.
+```{r}
+stud1<-transform(student,Dept=as.numeric(Dept))
+stud1
+```
+
+vi. Using factor() and mapvalues() convert dept names to numerical data.
+```{r}
+library("plyr")
+stud2<-transform(student,Dept=as.factor(mapvalues(Dept,c("CSE","ISE"),c(1,2))))
+stud2
+```
+

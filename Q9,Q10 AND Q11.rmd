@@ -1,0 +1,219 @@
+#QUESTION 9 till e 
+
+```{r}
+f<-read.csv('Q5a.csv',header=TRUE)
+f
+```
+
+a. Change the column names of faculty data set. 
+```{r}
+colnames(f)<-c("Names","Desig","Sal","Department","Trainings","Papers","Gender")
+f
+#summary(f)
+
+```
+
+b. Use map values() , as.factor() and transform ()
+   -- to change the designation column to have numerical values. 1- Prof, 2-Asso.Prof,          3-Asst.Prof;
+   --to change gender column 1-Male, 2-Female
+```{r}
+library(plyr)
+f<-transform(f,
+             Desig=as.factor(mapvalues(Desig,c("Professor","Assosciate Professor","Assistant Professor"),c(1,2,3))),
+             Gender=as.factor(mapvalues(Gender,c("M","F"),c(1,2))))
+f
+
+```
+
+c. Using with() and tapply() , calculate the mean training programs attended and no. of papers published in each department. Format it for markdown.
+DONT KNOW
+```{r}
+library(knitr)
+library(rmarkdown)
+
+kable(with(f,tapply(Trainings,INDEX=list(Department,Papers),mean)),format="markdown")
+
+```
+
+d. Using with() and aggregate() , calculate the mean training programs attended and no. of papers published in each department. Format it for markdown.
+```{r}
+library(knitr)
+library(rmarkdown)
+
+kable(with(f,aggregate(Trainings,by=list(Department,Papers),mean)),format="markdown")
+
+```
+
+e. Check whether the mean value of no. of papers published in depts. are influenced by training programs attended and designation. Do regression analysis using aggregate().
+```{r}
+aggregate(Papers~Trainings+Desig,f,mean)
+
+```
+
+
+
+# QUESTION 10 
+
+
+a. Create the table output for designation and papers published. Use with() and table().
+```{r}
+ans<-with(f,table(Papers,Desig))
+ans 
+```
+
+b. Find the odds of lower no. of paper published with respect to designation and no.of training programs attended using the output of question (f).
+DONNO
+```{r}
+ans.or<-as.numeric(ans[1,1])/as.numeric(ans[1,2])/as.numeric(ans[1,3])/as.numeric(ans[2,1])/as.numeric(ans[2,2])/as.numeric(ans[2,3])/as.numeric(ans[3,1])/as.numeric(ans[3,2])/as.numeric(ans[3,3])/as.numeric(ans[4,1])/as.numeric(ans[4,2])/as.numeric(ans[4,3])/as.numeric(ans[5,1])/as.numeric(ans[5,2])/as.numeric(ans[5,3])/as.numeric(ans[6,1])/as.numeric(ans[6,2])/as.numeric(ans[6,3])
+ans.or
+```
+
+c. Is the designation affects the training programs attended? Check it with the data. Prove it.
+```{r}
+with(f,cor(as.numeric(Desig), Trainings))
+
+```
+
+d. Find the correlation of papers published and training programs attended using with(), cor().
+```{r}
+with(f,cor(Papers, Trainings))
+```
+
+e. Find the correlation of training programs attended and designation using with(), cor().
+```{r}
+with(f,cor(Trainings,as.numeric(Desig)))
+```
+
+f. Using by() combine the operations of above questions (i) and (j) using function. And do the correlation analysis using cor() with in the function.
+```{r}
+by(data = f[c("Papers", "Trainings")], 
+   INDICES = f["Desig"], 
+   FUN = function(x) {cor(x[,1], x[,2])})
+
+```
+
+
+
+#QUESTION 11
+
+
+a. Plot average training programs attended against designations(only 3 designations) of the institution using plot()
+
+```{r}
+f1<-aggregate(Trainings~Desig,f,mean)
+plot(f1$Desig, f1$Trainings)
+```
+
+b. Plot average papers published against designations of the institution using plot().
+
+```{r}
+f2<-aggregate(Papers~Desig,f,mean)
+f2
+plot(f2$Desig, f2$Papers)
+```
+
+c. Change the x axis , color and y-axis labels respectively. Add legends.
+```{r}
+# plot(f2$Desig, f2$Papers,xlab="Designation",ylab="Papers Published",main="Designation vs Papers Published",col=5)
+
+par(mfrow = c(1,2))
+with(f, plot(Desig, Trainings, 
+                   main = "Designation vs Trainings", 
+                   xlab = "Designation", 
+                   ylab = "Tranings",col=7))
+with(f, plot(Desig, Papers, 
+                   main = "Designation vs Papers Published", 
+                   xlab = "Designation", 
+                    ylab = "Papers Published ",col=f$Desig))
+legend("bottomright", c("Professor","Associate","Assistant"), col=c(1,2,3),pch=12)
+
+```
+
+d. Plot the above graphs in (l) and (m) using with() and plot().
+```{r}
+par(mfrow = c(1,2))
+with(f, plot(Desig, Trainings, 
+                   main = "Designation vs Trainings", 
+                   xlab = "Designation", 
+                   ylab = "Tranings",col=7))
+with(f, plot(Desig, Papers, 
+                   main = "Designation vs Papers Published", 
+                   xlab = "Designation", 
+                    ylab = "Papers Published ",col=8))
+
+
+```
+
+e. Draw scatter plot for above questions. Draw box plot for above question. Draw bar plots for above questions. Draw single variable plots for above question.
+```{r}
+par(mfrow = c(1,2))
+with(f, plot(as.numeric(Desig), Trainings,
+                   main = "Designation vs Trainings",
+                   xlab = "Designation",
+                   ylab = "Tranings",col=1))
+with(f, plot(as.numeric(Desig), Papers,
+                   main = "Designation vs Papers Published",
+                   xlab = "Designation",
+                    ylab = "Papers Published ",col=2))
+
+par(mfrow = c(1,2))
+with(f, boxplot(as.numeric(Desig), Trainings, 
+                   main = "Designation vs Trainings", 
+                   xlab = "Designation", 
+                   ylab = "Tranings",col=1))
+with(f, boxplot(as.numeric(Desig), Papers, 
+                   main = "Designation vs Papers Published", 
+                   xlab = "Designation", 
+                    ylab = "Papers Published ",col=2))
+
+par(mfrow = c(1,2))
+with(f, barplot(as.numeric(Desig), Trainings, 
+                   main = "Designation vs Trainings", 
+                   xlab = "Designation", 
+                   ylab = "Tranings",col=1))
+with(f, barplot(as.numeric(Desig), Papers, 
+                   main = "Designation vs Papers Published", 
+                   xlab = "Designation", 
+                    ylab = "Papers Published ",col=2))
+
+```
+
+
+
+
+
+```{r}
+
+with(f,plot(Trainings))
+
+```
+
+f.plot the prof, asst.prof and asso.prof average performance in different colors using rep(), colorpalatte functions. Represent each designation average performance(no.of.papers published and training pgms atteneded) by different symbols.
+
+```{r}
+c1<-subset(f,Desig=="Assosciate Professor",c("Papers","Trainings"))
+y1<-mean(c1$Papers+ c1$Trainings)
+c2<-subset(f,Desig=="Assistant Professor",c("Papers","Trainings"))
+y2<-mean(c2$Papers+c1$Trainings)
+c3<-subset(f,Desig=="Professor",c("Papers","Trainings"))
+y3<-mean(c3$Papers+c3$Trainings)
+x<-c(1,2,3)
+y<-c(y1,y2,y3)
+
+
+p<-c(19,23,15)
+ plot(x, y, main = "avg performance", 
+                   xlab = "assoc prof", 
+                   ylab = "Tranings",col=palette(),pch=p)
+ 
+ with(f,text( x =1 ,y=y1, labels ="assoc prof",
+                pos = rep(c(1, 3, 1), c(5, 1, 2)))) 
+
+
+  with(f,text(x =2,y=y2, labels ="assis prof",
+                pos = rep(c(1, 3, 1), c(5, 1, 2)))) 
+  with(f,text(x =3,y=y3, labels ="prof",
+                pos = rep(c(1, 3, 1), c(5, 1, 2)))) 
+
+```
+
